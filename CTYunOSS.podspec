@@ -3,7 +3,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "CTYunOSS"
-  s.version      = "1.0"
+  s.version      = "1.1"
   s.summary      = "CTYunOSS"
   s.description  = <<-DESC
                     CTYunOSS
