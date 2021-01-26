@@ -18,11 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 上传文件
 /// @param data 文件data
-- (void)upload:(NSData*)data finishBlock:(void (^)(NSString *fileName))block;
-
-- (void)download:(NSString*)fileName finishBlock:(void (^)(UIImage *image))block; 
+- (void)upload:(NSData*)data finishBlock:(void (^)(NSString *imageUrl))block;
 
 + (CTYunOSSManager *)share;
-@end 
+@end
 
 NS_ASSUME_NONNULL_END

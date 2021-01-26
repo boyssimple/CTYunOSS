@@ -78,7 +78,8 @@ NSData *data = [[NSData alloc]initWithContentsOfURL:url];
                 }
                 
                 if (task.result) {
-                    [results addObject:fileName];
+                    NSString *url = [NSString stringWithFormat:@"http://%@.oos-cn.ctyunapi.cn/%@",[CTYunOSSConfig share].bucket,fileName];
+                    [results addObject:url];
                 }
                 return task;
             }];
@@ -90,12 +91,12 @@ NSData *data = [[NSData alloc]initWithContentsOfURL:url];
 
 /// 上传文件
 /// @param data 文件data
-- (void)upload:(NSData*)data finishBlock:(void (^)(NSString *fileName))block{
+- (void)upload:(NSData*)data finishBlock:(void (^)(NSString *imageUrl))block{
     NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.jpg"];
     BOOL saved = [data writeToFile:filePath atomically:NO];
     if (saved) {
         OOSTransferManagerUploadRequest *uploadRequest = [OOSTransferManagerUploadRequest new];
-        NSString *fileName = [self uuidString];
+        NSString *fileName = [NSString stringWithFormat:@"%@.png",[self uuidString]];
         uploadRequest.bucket = [CTYunOSSConfig share].bucket;//@"myttest";
         uploadRequest.key = fileName;
         uploadRequest.body = [NSURL fileURLWithPath:filePath];
@@ -107,42 +108,15 @@ NSData *data = [[NSData alloc]initWithContentsOfURL:url];
             
             if (task.result) {
                 if (block) {
-                    block(fileName);
+                    //拼接
+//                http://myttest.oos-cn.ctyunapi.cn/61063a05-18ef-4785-a0a3-0a9cbfeaed73.jpg
+                    NSString *url = [NSString stringWithFormat:@"http://%@.oos-cn.ctyunapi.cn/%@",[CTYunOSSConfig share].bucket,fileName];
+                    block(url);
                 }
             }
             return task;
         }];
     }
-}
-
-/// 上传文件
-/// @param fileName 文件名称
-- (void)download:(NSString*)fileName finishBlock:(void (^)(UIImage *image))block{
-    NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"download_temp.jpg"]];
-    NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-    
-    OOSTransferManagerDownloadRequest *downloadRequest = [OOSTransferManagerDownloadRequest new];
-    downloadRequest.bucket = [CTYunOSSConfig share].bucket;
-    downloadRequest.key = fileName;
-    downloadRequest.downloadingFileURL = downloadingFileURL;
-    
-    [[self.transferManager download:downloadRequest] continueWithBlock:^id(OOSTask *task) {
-        if (task.error){
-            NSLog(@"Error: %@", task.error);
-        }
-        
-        if (task.result) {
-            NSData *data = [NSData dataWithContentsOfFile:downloadingFilePath];
-            if (block) {
-                block([UIImage imageWithData:data]);
-            }
-//            dispatch_async(dispatch_get_main_queue(), ^{
-                
-//                imageView.image = [UIImage imageWithContentsOfFile:downloadingFilePath];
-//            });
-        }
-        return nil;
-    }];
 }
 
 
