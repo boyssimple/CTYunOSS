@@ -22,11 +22,6 @@ pod 'CTYunOSS'
     
     NSURL *url = [[NSBundle mainBundle] URLForResource:@"d" withExtension:@"jpg"];
     NSData *data = [[NSData alloc]initWithContentsOfURL:url];
-    [[CTYunOSSManager share] upload:data finishBlock:^(NSString * _Nonnull fileName) {
-        NSLog(@"%@,%@",@"上传完成",fileName);
-        [[CTYunOSSManager share] download:fileName finishBlock:^(UIImage * _Nonnull image) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                imageView.image = image;
-            });
-        }];
+    [[CTYunOSSManager share] upload:data finishBlock:^(NSString * _Nonnull imageUrl) {
+        NSLog(@"%@,%@",@"上传完成",imageUrl);
     }];
